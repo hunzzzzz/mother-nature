@@ -39,6 +39,8 @@ subprojects {
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
 		// monitoring
 		implementation("org.springframework.boot:spring-boot-starter-actuator")
+		// redis
+		implementation("org.springframework.boot:spring-boot-starter-data-redis")
 		// spring cloud
 		implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
 		implementation("org.springframework.cloud:spring-cloud-starter-bus-kafka")
