@@ -1,2 +1,2 @@
 rootProject.name = "api"
-include("gateway-service", "user-service")
+include("common", "gateway-service", "user-service")
