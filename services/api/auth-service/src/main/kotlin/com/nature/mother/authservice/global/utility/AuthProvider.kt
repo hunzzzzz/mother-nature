@@ -30,7 +30,8 @@ class AuthProvider(
         val userKey = getKeyOfUserInfo(email = email)
 
         repeat(3) {
-            user = redisCommands.get(key = userKey).let { objectMapper.readValue(it, SimpleUserInfo::class.java) }
+            user = redisCommands.get(key = userKey)
+                ?.let { objectMapper.readValue(it, SimpleUserInfo::class.java) }
 
             if (user != null) return user!!
             else Thread.sleep(500) // 0.5s

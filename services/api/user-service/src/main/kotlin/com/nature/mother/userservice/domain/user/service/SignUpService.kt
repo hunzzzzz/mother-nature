@@ -1,8 +1,11 @@
 package com.nature.mother.userservice.domain.user.service
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.nature.mother.common.model.SimpleUserInfo
+import com.nature.mother.common.dto.KakaoSignup
 import com.nature.mother.common.exception.ErrorCode.*
+import com.nature.mother.common.model.SimpleUserInfo
+import com.nature.mother.common.model.UserType
 import com.nature.mother.common.utility.RedisCommands
 import com.nature.mother.common.variables.Logs.MAIL_ERROR_LOG
 import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfNicknames
@@ -11,15 +14,19 @@ import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfUserInfo
 import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfVerificationCode
 import com.nature.mother.userservice.domain.user.dto.request.SignUpRequest
 import com.nature.mother.userservice.domain.user.model.BaseUser
+import com.nature.mother.userservice.domain.user.model.KakaoUser
 import com.nature.mother.userservice.domain.user.model.User
-import com.nature.mother.common.model.UserType
+import com.nature.mother.userservice.domain.user.repository.KakaoUserRepository
 import com.nature.mother.userservice.domain.user.repository.UserRepository
 import com.nature.mother.userservice.global.exception.InternalSystemException
 import com.nature.mother.userservice.global.exception.InvalidUserInfoException
+import com.nature.mother.userservice.global.utility.NicknameGenerator.generateNickname
 import com.nature.mother.userservice.global.utility.UserMailSender
 import org.slf4j.LoggerFactory
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.TimeUnit.MINUTES
 
 @Service
@@ -28,6 +35,7 @@ class SignUpService(
     private val passwordEncoder: PasswordEncoder,
     private val redisCommands: RedisCommands,
     private val userMailSender: UserMailSender,
+    private val kakaoUserRepository: KakaoUserRepository,
     private val userRepository: UserRepository
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -139,9 +147,31 @@ class SignUpService(
         checkTwoPasswords(first = request.password!!, second = request.password2!!)
 
         // save 'user' in db
-        val user = request.to(passwordEncoder = passwordEncoder).let { userRepository.save(it) }
+        val user = User(
+            email = request.email!!,
+            password = passwordEncoder.encode(request.password),
+            name = request.name!!,
+            nickname = generateNickname(),
+            phone = request.phone!!
+        ).let { userRepository.save(it) }
 
         // save 'user' in redis
         saveUserInfoInRedis(type = UserType.NORMAL, user = user)
+    }
+
+    @KafkaListener(topics = ["kakao-signup"], groupId = "user-group-id")
+    @Transactional
+    fun kakaoSignup(message: String) {
+        val data = objectMapper.readValue(message, object : TypeReference<KakaoSignup>() {})
+
+        // save 'kakao-user' in database
+        val user = KakaoUser(
+            email = data.email,
+            nickname = data.nickname ?: generateNickname()
+        ).let { kakaoUserRepository.save(it) }
+
+        // save 'user info' in redis
+        saveUserInfoInRedis(type = UserType.KAKAO, user = user)
+        redisCommands.sAdd(key = getKeyOfNicknames(), value = user.nickname)
     }
 }

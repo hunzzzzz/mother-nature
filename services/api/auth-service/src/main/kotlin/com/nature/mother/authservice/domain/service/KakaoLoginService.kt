@@ -13,7 +13,6 @@ import com.nature.mother.common.utility.RedisCommands
 import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfUserInfo
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.context.config.annotation.RefreshScope
-import org.springframework.context.annotation.Description
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 
@@ -55,12 +54,11 @@ class KakaoLoginService(
         )
     }
 
-    @Description("카카오 유저 로그인")
     fun login(code: String): KakaoTokenResponse {
         val kakaoToken = getToken(code = code)
         val userInfo = getUserInfo(accessToken = kakaoToken.accessToken)
         val email = userInfo.kakaoAccount.email!!
-        
+
         // if user is 'newcomer' -> signup
         val userKey = getKeyOfUserInfo(email = email)
         val isNewcomer = redisCommands.get(key = userKey) == null
