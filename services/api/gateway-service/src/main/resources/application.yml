@@ -7,6 +7,13 @@ spring:
   cloud:
     gateway:
       routes:
+        # auth service (without auth)
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/actuator/**, /auth-service/login/**,
+          filters:
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
         # user service (without auth)
         - id: user-service
           uri: lb://USER-SERVICE

@@ -1,6 +1,7 @@
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks
 bootJar.enabled = false
 
+extra["jwtVersion"] = "0.12.6"
 extra["springCloudVersion"] = "2024.0.0"
 
 plugins {
@@ -34,6 +35,10 @@ subprojects {
 	apply(plugin = "io.spring.dependency-management")
 
 	dependencies {
+		// jwt
+		implementation("io.jsonwebtoken:jjwt-api:${property("jwtVersion")}")
+		runtimeOnly("io.jsonwebtoken:jjwt-impl:${property("jwtVersion")}")
+		runtimeOnly("io.jsonwebtoken:jjwt-jackson:${property("jwtVersion")}")
 		// kotlin
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 		implementation("org.jetbrains.kotlin:kotlin-reflect")

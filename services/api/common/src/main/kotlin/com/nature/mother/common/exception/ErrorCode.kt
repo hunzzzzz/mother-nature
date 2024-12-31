@@ -12,6 +12,10 @@ enum class ErrorCode(val message: String) {
     SIGNUP_NOT_IDENTIFIED("본인인증이 완료되지 않았습니다."),
     SIGNUP_INVALID_TWO_PASSWORDS("두 비밀번호가 일치하지 않습니다."),
 
+    // auth
+    LOGIN_INVALID_INFO("이메일 혹은 비밀번호가 잘못되었습니다. 다시 확인해주세요."),
+    OAUTH_LOGIN_ERROR("로그인 과정에 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
+
     // system
     MAIL_SYSTEM_ERROR("이메일 전송 과정에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 }

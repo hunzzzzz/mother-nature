@@ -1,4 +1,4 @@
-package com.nature.mother.userservice.global.config
+package com.nature.mother.common.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
