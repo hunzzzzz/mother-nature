@@ -5,7 +5,7 @@ import com.nature.mother.authservice.domain.dto.request.LoginRequest
 import com.nature.mother.authservice.domain.dto.response.TokenResponse
 import com.nature.mother.authservice.global.exception.LoginException
 import com.nature.mother.authservice.global.utility.AuthProvider
-import com.nature.mother.common.dto.SimpleUserInfo
+import com.nature.mother.common.model.SimpleUserInfo
 import com.nature.mother.common.exception.ErrorCode.LOGIN_INVALID_INFO
 import com.nature.mother.common.utility.RedisCommands
 import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfPassword

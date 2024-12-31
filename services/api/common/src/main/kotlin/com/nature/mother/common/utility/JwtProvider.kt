@@ -1,6 +1,6 @@
 package com.nature.mother.common.utility
 
-import com.nature.mother.common.dto.SimpleUserInfo
+import com.nature.mother.common.model.SimpleUserInfo
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value

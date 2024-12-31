@@ -1,4 +1,4 @@
-package com.nature.mother.common.dto
+package com.nature.mother.common.model
 
 data class SimpleUserInfo(
     val userId: String,

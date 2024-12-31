@@ -1,5 +1,6 @@
 package com.nature.mother.userservice.domain.user.model
 
+import com.nature.mother.common.model.UserType
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.springframework.data.jpa.domain.support.AuditingEntityListener

@@ -1,7 +1,7 @@
 package com.nature.mother.userservice.domain.user.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.nature.mother.common.dto.SimpleUserInfo
+import com.nature.mother.common.model.SimpleUserInfo
 import com.nature.mother.common.exception.ErrorCode.*
 import com.nature.mother.common.utility.RedisCommands
 import com.nature.mother.common.variables.Logs.MAIL_ERROR_LOG
@@ -12,7 +12,7 @@ import com.nature.mother.common.variables.RedisKeyFinder.getKeyOfVerificationCod
 import com.nature.mother.userservice.domain.user.dto.request.SignUpRequest
 import com.nature.mother.userservice.domain.user.model.BaseUser
 import com.nature.mother.userservice.domain.user.model.User
-import com.nature.mother.userservice.domain.user.model.UserType
+import com.nature.mother.common.model.UserType
 import com.nature.mother.userservice.domain.user.repository.UserRepository
 import com.nature.mother.userservice.global.exception.InternalSystemException
 import com.nature.mother.userservice.global.exception.InvalidUserInfoException

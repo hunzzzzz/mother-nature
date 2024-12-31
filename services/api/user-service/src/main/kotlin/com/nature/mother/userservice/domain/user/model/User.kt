@@ -1,5 +1,6 @@
 package com.nature.mother.userservice.domain.user.model
 
+import com.nature.mother.common.model.UserType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
