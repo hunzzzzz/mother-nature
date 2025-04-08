@@ -3,18 +3,39 @@ name: CI/CD
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'product-service/**'
+      - 'order-service/**'
   pull_request:
     branches: [ main ]
 
 env:
   AWS_REGION: ap-northeast-2
-  APP_NAME: mother-nature/product-service
-  PROJECT_DIR: ./product-service
+  APP_NAME_PREFIX: mother-nature
 
 jobs:
-  build:
+  # Detect changed services
+  detect-changed-services:
     runs-on: ubuntu-latest
-    
+    outputs:
+      services: ${{ steps.changed-files.outputs.services }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: tj-actions/changed-files@v42
+      id: changed-files
+      with:
+        separator: ','
+        files: |
+          product-service/**
+          order-service/**
+          
+  # Build
+  build:
+    needs: detect-changed-services
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJSON(needs.detect-changed-services.outputs.services) }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -26,11 +47,11 @@ jobs:
         distribution: 'temurin'
 
     - name: Grant execute permission for gradlew
-      working-directory: ${{ env.PROJECT_DIR }}
+      working-directory: ${{ matrix.service }}
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      working-directory: ${{ env.PROJECT_DIR }}
+      working-directory: ${{ matrix.service }}
       run: ./gradlew clean build
 
     - name: Configure AWS credentials
@@ -44,12 +65,10 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build Docker image
-      working-directory: ${{ env.PROJECT_DIR }}
+    - name: Build&Push Docker image
+      working-directory: ${{ matrix.service }}
       run: |
-        docker build -t ${{ env.APP_NAME }} .
-        docker tag ${{ env.APP_NAME }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.APP_NAME }}:latest
-
-    - name: Push Docker image to Amazon ECR
-      run: |
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.APP_NAME }}:latest
+        SERVICE_NAME=${{ env.APP_NAME_PREFIX }}/${{ matrix.service }}
+        docker build -t $SERVICE_NAME .
+        docker tag $SERVICE_NAME:latest ${{ steps.login-ecr.outputs.registry }}/$SERVICE_NAME:latest
+        docker push ${{ steps.login-ecr.outputs.registry }}/$SERVICE_NAME:latest
