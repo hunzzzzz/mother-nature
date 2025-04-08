@@ -16,5 +16,12 @@ class Product(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    val category: Category
-)
+    val category: Category,
+
+    @Column(name = "quantity", nullable = false)
+    var quantity: Int
+) {
+    fun updateQuantity(count: Int) {
+        this.quantity += count
+    }
+}

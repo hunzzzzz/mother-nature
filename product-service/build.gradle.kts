@@ -26,6 +26,8 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     // jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // kafka
+    implementation("org.springframework.kafka:spring-kafka")
     // kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
