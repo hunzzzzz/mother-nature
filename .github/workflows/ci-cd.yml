@@ -31,13 +31,10 @@ jobs:
           product-service/**
           order-service/**
           
-    - name: Set services output
-      id: set-output
+    - name: Debug outputs
       run: |
-        SERVICES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | \
-          grep -oE '(product-service|order-service)' | \
-          sort | uniq | jq -R -s -c 'split("\n") | map(select(. != ""))')
-        echo "services=${SERVICES}" >> $GITHUB_OUTPUT
+        echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
+        echo "Services: ${{ steps.set-output.outputs.services }}"
           
   # Build
   build:
