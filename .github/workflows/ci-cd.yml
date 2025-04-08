@@ -27,7 +27,7 @@ jobs:
 
     - name: Grant execute permission for gradlew
       working-directory: ${{ env.DOCKERFILE_DIR }}
-      run: chmod +x /gradlew
+      run: chmod +x gradlew
 
     - name: Build with Gradle
       working-directory: ${{ env.DOCKERFILE_DIR }}
