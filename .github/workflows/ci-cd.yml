@@ -18,16 +18,26 @@ jobs:
   detect-changed-services:
     runs-on: ubuntu-latest
     outputs:
-      services: ${{ steps.changed-files.outputs.services }}
+      services: ${{ steps.set-output.outputs.services }}
     steps:
     - uses: actions/checkout@v4
-    - uses: tj-actions/changed-files@v42
+
+    - name: Get changed files
       id: changed-files
+      uses: tj-actions/changed-files@v42
       with:
         separator: ','
         files: |
           product-service/**
           order-service/**
+          
+    - name: Set services output
+      id: set-output
+      run: |
+        SERVICES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | \
+          grep -oE '(product-service|order-service)' | \
+          sort | uniq | jq -R -s -c 'split("\n") | map(select(. != ""))')
+        echo "services=${SERVICES}" >> $GITHUB_OUTPUT
           
   # Build
   build:
@@ -36,6 +46,7 @@ jobs:
     strategy:
       matrix:
         service: ${{ fromJSON(needs.detect-changed-services.outputs.services) }}
+    if: ${{ fromJSON(needs.detect-changed-services.outputs.services).length > 0 }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
