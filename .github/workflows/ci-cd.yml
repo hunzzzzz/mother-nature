@@ -9,7 +9,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   APP_NAME: mother-nature/product-service
-  DOCKERFILE_PATH: /product-service
+  DOCKERFILE_PATH: ./product-service
 
 jobs:
   build:
