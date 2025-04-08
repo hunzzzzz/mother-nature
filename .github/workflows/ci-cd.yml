@@ -9,7 +9,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   APP_NAME: mother-nature/product-service
-  DOCKERFILE_PATH: product-service
+  DOCKERFILE_PATH: /product-service
 
 jobs:
   build:
@@ -26,7 +26,8 @@ jobs:
         distribution: 'temurin'
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ${{ env.DOCKERFILE_DIR }}/gradlew
+      working-directory: ${{ env.DOCKERFILE_DIR }}
+      run: chmod +x /gradlew
 
     - name: Build with Gradle
       working-directory: ${{ env.DOCKERFILE_DIR }}
